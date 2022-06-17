@@ -7,7 +7,22 @@ const User = require('../model/user.model')
 const getLoginFrom = (req,res)=>{
     return res.render('login/layout')
 }
-const login = (req,res)=>{}
+
+const login = async(req,res)=>{
+    const {email,password} = req.body
+    const fields = {email,password}
+    const findUser = await User.findOne({email})
+    if(!findUser){
+        return res.render('signup/layout',{message:'User does not exist Signup'})
+    }
+    const matchPassword = await bcrypt.compare(password,findUser.password)
+    if(!matchPassword){
+        return res.render('login/layout',{message:'Credentials Mismatched'})
+    }
+    return res.render('user/layout')
+}
+
+
 const getSignupFrom = (req,res)=>{
     return res.render('signup/layout')
 }
